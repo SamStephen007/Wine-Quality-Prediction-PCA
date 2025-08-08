@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Quality Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --wine-red: #6b2737;
+            --wine-dark: #521d2a;
+            --wine-light: #a44c65;
+            --cream: #f5e6d3;
+            --gold: #d4af37;
+            --gray-light: #f0f0f0;
+            --gray-medium: #e0e0e0;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--cream), var(--gray-light));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--wine-dark);
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gold);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--wine-light);
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(107, 39, 55, 0.1);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+        
+        form:hover {
+            transform: translateY(-5px);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            color: var(--wine-dark);
+            font-size: 0.9rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray-medium);
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            border-color: var(--wine-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(107, 39, 55, 0.1);
+        }
+        
+        button {
+            margin-top: 20px;
+            background: linear-gradient(135deg, var(--wine-red), var(--wine-dark));
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, var(--wine-dark), var(--wine-red));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(107, 39, 55, 0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result-box {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(107, 39, 55, 0.1);
+            text-align: center;
+            font-size: 1.1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            margin-bottom: 30px;
+        }
+        
+        .result-box.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .excellent {
+            color: #2e8b57;
+            border-left: 5px solid #2e8b57;
+        }
+        
+        .good {
+            color: #4c9a2a;
+            border-left: 5px solid #4c9a2a;
+        }
+        
+        .average {
+            color: #f39c12;
+            border-left: 5px solid #f39c12;
+        }
+        
+        .poor {
+            color: #e74c3c;
+            border-left: 5px solid #e74c3c;
+        }
+        
+        .error {
+            color: #f39c12;
+            border-left: 5px solid #f39c12;
+        }
+        
+        .wine-icon {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        footer {
+            margin-top: auto;
+            color: var(--wine-light);
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wine Quality Predictor</h1>
+        <p class="subtitle">Discover the potential quality of your wine based on its chemical properties</p>
+
+        <form action="/predict" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="fixed_acidity">Fixed Acidity (g/dm³)</label>
+                    <input type="number" step="0.01" id="fixed_acidity" name="fixed_acidity" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="volatile_acidity">Volatile Acidity (g/dm³)</label>
+                    <input type="number" step="0.01" id="volatile_acidity" name="volatile_acidity" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="citric_acid">Citric Acid (g/dm³)</label>
+                    <input type="number" step="0.01" id="citric_acid" name="citric_acid" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="residual_sugar">Residual Sugar (g/dm³)</label>
+                    <input type="number" step="0.01" id="residual_sugar" name="residual_sugar" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chlorides">Chlorides (g/dm³)</label>
+                    <input type="number" step="0.0001" id="chlorides" name="chlorides" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="free_sulfur_dioxide">Free SO₂ (mg/dm³)</label>
+                    <input type="number" step="0.1" id="free_sulfur_dioxide" name="free_sulfur_dioxide" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="total_sulfur_dioxide">Total SO₂ (mg/dm³)</label>
+                    <input type="number" step="0.1" id="total_sulfur_dioxide" name="total_sulfur_dioxide" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="density">Density (g/cm³)</label>
+                    <input type="number" step="0.0001" id="density" name="density" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pH">pH</label>
+                    <input type="number" step="0.01" id="pH" name="pH" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sulphates">Sulphates (g/dm³)</label>
+                    <input type="number" step="0.01" id="sulphates" name="sulphates" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="alcohol">Alcohol (% vol)</label>
+                    <input type="number" step="0.1" id="alcohol" name="alcohol" required>
+                </div>
+            </div>
+
+            <button type="submit">
+                <span class="wine-icon">🍷</span> Predict Quality
+            </button>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result-box show {{ quality_class }}">
+            <span class="wine-icon">
+                {% if quality_class == 'excellent' %}🍾{% endif %}
+                {% if quality_class == 'good' %}🍷{% endif %}
+                {% if quality_class == 'average' %}🥂{% endif %}
+                {% if quality_class == 'poor' %}🚫{% endif %}
+                {% if quality_class == 'error' %}⚠️{% endif %}
+            </span>
+            {{ prediction_text }}
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        &copy; 2023 Wine Quality Predictor | For educational purposes only
+    </footer>
+
+    <script>
+        // Add animation to result box when it appears
+        document.addEventListener('DOMContentLoaded', function() {
+            const resultBox = document.querySelector('.result-box');
+            if (resultBox) {
+                setTimeout(() => {
+                    resultBox.classList.add('show');
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
