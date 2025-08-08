@@ -95,6 +95,6 @@ Expected Output: **Excellent Quality Wine 🍷**
 | Alcohol                  | 9.8    |
 
 Expected Output: **Poor Quality Wine ❌**
-![BadWine](Images\image.png)
+![BadWine](Images/image.png)
 ---
 
